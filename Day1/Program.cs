@@ -3,7 +3,9 @@
 
 
 var input = File.ReadAllLines("input.txt");
+const int MAX_DISTANCE = 100;
 
+// 1132
 int Part1()
 {
     int dial = 50;
@@ -11,38 +13,20 @@ int Part1()
 
     foreach (var rotation in input)
     {
-        var direction = rotation[0];
-        var distance = int.Parse(rotation[1..]) % 100;
+        var direction = rotation[0] == 'L' ? -1 : 1;
+        var distance = int.Parse(rotation[1..]);
 
-        if (direction == 'L')
-        {
-            dial -= distance;
+        dial += distance * direction;
+        dial %= MAX_DISTANCE;
 
-            if (dial < 0)
-            {
-                dial += 100;
-            }
-        }
-        else
-        {
-            dial += distance;
-
-            if (dial > 99)
-            {
-                dial -= 100;
-            }
-        }
-
-        if (dial == 0)
-        {
-            counts++;
-        }
+        if (dial < 0) dial += MAX_DISTANCE;
+        if (dial == 0) counts++;
     }
 
     return counts;
 }
 
-
+// 6623
 int Part2()
 {
     int dial = 50;
@@ -50,36 +34,17 @@ int Part2()
 
     foreach (var rotation in input)
     {
-        var direction = rotation[0];
-        var distance = int.Parse(rotation[1..]);
+        var direction = rotation[0] == 'L' ? -1 : 1;
+        var clicks = int.Parse(rotation[1..]);
+        var toZero = direction == 1 ? MAX_DISTANCE - dial : dial;
 
-        while (distance > 100)
-        {
-            distance -= 100;
-            counts++;
-        }
+        if (toZero > 0 && clicks >= toZero) counts++;
 
-        if (direction == 'L')
-        {
-            dial -= distance;
+        counts += (clicks - toZero) / MAX_DISTANCE;
 
-            if (dial < 0)
-            {
-                dial += 100;
-                counts++;
-            }
-        }
-        else
-        {
-            dial += distance;
-
-            if (dial > 99)
-            {
-                dial -= 100;
-                counts++;
-            }
-        }
-        
+        dial += direction * clicks;
+        dial %= MAX_DISTANCE;
+        if (dial < 0) dial += MAX_DISTANCE;
     }
 
     return counts;
